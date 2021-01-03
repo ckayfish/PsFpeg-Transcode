@@ -13,7 +13,7 @@
 #                                                                                  #
 #                                                                                  #
 #                                                                                  #
-#  v1.0.1 2020-12-30                                                               #
+#  v1.0.1 2021-01-03                                                               #
 #                                                                                  #
 #     - Added:   Select Nvidia hardware vs software encoding (Default CPU)         #
 #                Hardware encoding provides less options, and is of lesser quality,#
@@ -34,10 +34,10 @@ $mediainfo="D:\Program Files\MediaInfo\Cli\mediainfo.exe"
 
 ## Set Input and output paths
 # Path to recursively find video files to process
-$inPath="M:\mediadisk1\media\tv\hdtv\Blue Planet II"
+$inPath="M:\fastdisk2\output\hdtv\Blue Planet II\input"
 #$inPath="M:\mediadisk1\media\tv\hdtv\"
 # Path to output video files. The ful subpath from the inPath is preserved
-$outPath="M:\fastdisk2\output\hdtv\Blue Planet II\Medium"
+$outPath="M:\fastdisk2\output\hdtv\Blue Planet II\SW.SlowCFR30"
 
 # Choose if we should overwrite existing video files in the destination
 [bool]$noOverwrite=$false  #Set to $false to overwite all files, $true to NOT overwrite files
@@ -45,16 +45,16 @@ $outPath="M:\fastdisk2\output\hdtv\Blue Planet II\Medium"
 # Set to $true is you want to use hardware (GPU) transcoding vs software (CPU)
 # CPU generally results in better quality and smaller files, hardware is much faster
 # If using hardware (GPU), please ensure your NVidia drivers are up to date
-[bool]$hardwareEncode=$true   # Default is $false, otherwise $true
+[bool]$hardwareEncode=$false   # Default is $false, otherwise $true
 
 ## Presets are a set of configuration variables that balance speed vs quality. Typically, the slower it can encode, the better the quality 
 # Used if $hardwareEncode=$false. Valid presets are: ultrafast, superfast, veryfast, faster, fast, medium, slow, slower, veryslow
-$softwarePreset="medium"   # "medium" is default
+$softwarePreset="slow"   # "medium" is default
 # Used if $hardwareEncode=$true. Valid presets are: default, slow, medium, fast, hp, hq, bd, ll, llhq, llhp, lossless, losslesshp
-$hardwarePreset="default"
+$hardwarePreset="fast"
 
-#Quality RF setting. Smaller is more lossless, default is 22. Used with SOFTWARE encoding only
-$crf="20"
+#Quality RF setting. Smaller is more lossless, default is 22. Used as CQ setting for Hardware transcodes
+$crf="30"
 
 # Your personal encoder tag to add to the postfile of the base file name. Leave blank or comment out to not use
 $encoderTag="PONG"
@@ -194,6 +194,8 @@ get-childitem $inPath -recurse | where {$extentions.Contains($_.extension)} | % 
         TimeLog-Output "Encoding with:   HARDWARE"
         $args += "-c:v"
         $args += "hevc_nvenc"
+        $args += "-cq:v"
+        $args += "$crf"
         $args += "-preset"
         $args += "$hardwarePreset"
       } else { # IF $hardwareEncode is FALSE
@@ -244,9 +246,9 @@ get-childitem $inPath -recurse | where {$extentions.Contains($_.extension)} | % 
 
       #Set outputfile name, which depends on encoding method
       if ($hardwareEncode) {
-        $fileOutLog="$logPath\$logPrefix-$((Get-Date).ToString("yyyyMMddHHmmss"))-$outfileName.HW.$hardwarePreset.log"
+        $fileOutLog="$logPath\$logPrefix-$((Get-Date).ToString("yyyyMMddHHmmss"))-$outfileName.HW.$hardwarePreset.cq$crf.log"
       } else {
-        $fileOutLog="$logPath\$logPrefix-$((Get-Date).ToString("yyyyMMddHHmmss"))-$outfileName.SW.$hardwarePreset.crf$crf.log"
+        $fileOutLog="$logPath\$logPrefix-$((Get-Date).ToString("yyyyMMddHHmmss"))-$outfileName.SW.$softwarePreset.crf$crf.log"
       }
 
       # Execute ffmpeg CLI with arguments and capture elaped time
