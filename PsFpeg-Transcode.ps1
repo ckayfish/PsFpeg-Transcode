@@ -34,13 +34,12 @@ $mediainfo="D:\Program Files\MediaInfo\Cli\mediainfo.exe"
 
 ## Set Input and output paths
 # Path to recursively find video files to process
-$inPath="M:\fastdisk2\output\hdtv\Blue Planet II\input"
-#$inPath="M:\mediadisk1\media\tv\hdtv\"
+$inPath="C:\input"
 # Path to output video files. The ful subpath from the inPath is preserved
-$outPath="M:\fastdisk2\output\hdtv\Blue Planet II\SW.SlowCFR30"
+$outPath="C:\output"
 
 # Choose if we should overwrite existing video files in the destination
-[bool]$noOverwrite=$false  #Set to $false to overwite all files, $true to NOT overwrite files
+[bool]$noOverwrite=$true  #Set to $false to overwite all files, $true to NOT overwrite files
 
 # Set to $true is you want to use hardware (GPU) transcoding vs software (CPU)
 # CPU generally results in better quality and smaller files, hardware is much faster
@@ -51,10 +50,10 @@ $outPath="M:\fastdisk2\output\hdtv\Blue Planet II\SW.SlowCFR30"
 # Used if $hardwareEncode=$false. Valid presets are: ultrafast, superfast, veryfast, faster, fast, medium, slow, slower, veryslow
 $softwarePreset="slow"   # "medium" is default
 # Used if $hardwareEncode=$true. Valid presets are: default, slow, medium, fast, hp, hq, bd, ll, llhq, llhp, lossless, losslesshp
-$hardwarePreset="fast"
+$hardwarePreset="fast"   # "medium" is default
 
 #Quality RF setting. Smaller is more lossless, default is 22. Used as CQ setting for Hardware transcodes
-$crf="30"
+$crf="19"
 
 # Your personal encoder tag to add to the postfile of the base file name. Leave blank or comment out to not use
 $encoderTag="PONG"
